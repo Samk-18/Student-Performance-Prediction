@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Performance Prediction</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Student Performance Prediction</h1>
+    <input type="text" id="roll_no" placeholder="Enter Roll Number">
+    <button onclick="getScores()">Get Scores</button>
+
+    <div id="result"></div>
+
+    <script>
+        async function getScores() {
+            const rollNo = document.getElementById('roll_no').value;
+            const response = await fetch('/get_scores', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `roll_no=${rollNo}`
+            });
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = ''; // Clear previous results
+
+            if (response.ok) {
+                const data = await response.json();
+                resultDiv.innerHTML = `<h2>Student ID: ${data.student_id}</h2>
+                                       <p>Attendance: ${data.attendance}%</p>
+                                       <p>CA: ${data.ca}</p>
+                                       <p>MD: ${data.mid_sem}</p>
+                                       <p>ESE: ${data.end_sem}</p>
+                                       <p>Total Grade: ${data.total_grade}</p>
+                                       <p>Previous Grade: ${data.previous_grade}</p>`;
+            } else {
+                const errorData = await response.json();
+                resultDiv.innerHTML = `<p style="color: red;">${errorData.error}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
